@@ -1,0 +1,15 @@
+{
+  "name": "events-lab",
+  "version": "1.0.0",
+  "description": "Events Lab",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest --verbose --coverage"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "faker": "^4.1.0",
+    "jest": "^24.8.0"
+  }
+}
