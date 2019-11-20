@@ -45,9 +45,9 @@ exports.saveFile = async file => {
     let data = faker.lorem.sentence();
     let text = data.toString().toUpperCase();
     await write(file, Buffer.from(text));
-    emitter.emit('file-saved');
+    emitter.emit('file-saved', file);
   } catch (e) {
-    emitter.emit('file-error');
+    emitter.emit('file-error', file);
     console.error(e);
   }
 };
