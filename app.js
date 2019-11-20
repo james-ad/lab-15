@@ -25,6 +25,4 @@ const alterFile = file => {
 };
 
 let file = process.argv.slice(2).shift();
-// alterFile(file);
-let some = fileChanger.alterFile(file);
-console.log(some);
+fileChanger.alterFile(file);
