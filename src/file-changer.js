@@ -9,44 +9,53 @@ const write = util.promisify(fs.writeFile);
 
 module.exports = exports = {};
 
+emitter.on('file-saved', (file, error) => {
+  console.log(`${file} saved`);
+  return {
+    status: 1,
+    file: file,
+    text: error
+  };
+});
+
+emitter.on('fileError', file => {
+  console.log(`file error`);
+  return {
+    status: 0,
+    file: file,
+    text: 'saved'
+  };
+});
+
 /**
  *
  * @param {json} file
  * @function readPromise
  */
 exports.loadFile = async function(file) {
-  let path = `${process.cwd()}/${file}`;
-  console.log('FILE: ', file);
-  console.log('PATH: ', path);
   try {
-    let data = await read(file);
-    data = JSON.parse(data);
-    console.log('DATAT: ',data)
-    console.log('Original Promise Data: ', data);
-    data = JSON.stringify(data);
-    return data;
+    return await read(file);
   } catch (e) {
     console.error(e);
   }
 };
 
-exports.alterFile = file => {
-  fs.readFile(file, err => {
-    if (err) {
-      throw err;
-    }
+exports.saveFile = async file => {
+  try {
     let data = faker.lorem.sentence();
     let text = data.toString().toUpperCase();
-    fs.writeFile(file, Buffer.from(text), (err, data) => {
-      if (err) {
-        throw err;
-      }
-      console.log(`${file} saved`);
-    });
-  });
+    await write(file, Buffer.from(text));
+    emitter.emit('file-saved');
+  } catch (e) {
+    emitter.emit('file-error');
+    console.error(e);
+  }
+};
+
+exports.alterFile = async file => {
+  await exports.loadFile(file);
+  await exports.saveFile(file);
 };
 
 let file = process.argv.slice(2).shift();
-console.log(file)
-exports.loadFile(file);
-
+exports.alterFile(file);
