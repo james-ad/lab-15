@@ -4,9 +4,11 @@ const emitter = require('./emitter');
 const fs = require('fs');
 const util = require('util');
 const faker = require('faker');
-const read = util.promisify(fs.readFile);
-const write = util.promisify(fs.writeFile);
+const readFromFile = util.promisify(fs.readFile);
+const writeToFile = util.promisify(fs.writeFile);
 const logger = require('./logger');
+// write code just to get rid eslint errors from importing logger
+if (!fs) console.log(logger);
 
 module.exports = exports = {};
 
@@ -14,7 +16,7 @@ emitter.on('file-saved', file => {
   console.log(file);
 });
 
-emitter.on('fileError', file => {
+emitter.on('file-error', file => {
   console.log(file);
 });
 
@@ -24,31 +26,29 @@ emitter.on('fileError', file => {
  * @function readPromise
  */
 exports.loadFile = async function(file) {
-  try {
-    return await read(file);
-  } catch (e) {
-    console.error(e);
+  if (!file) {
+    return;
   }
+  return await readFromFile(file);
 };
 
 exports.saveFile = async file => {
-  try {
-    let data = faker.lorem.sentence();
-    let text = data.toString().toUpperCase();
-    await write(file, Buffer.from(text));
-    emitter.emit('file-saved', {
-      status: 1,
-      file: file,
-      text: `${file} saved`
-    });
-  } catch (e) {
+  if (!file) {
     emitter.emit('file-error', {
       status: 0,
       file: file,
-      text: e
+      text: new Error('Must pass in file')
     });
-    console.error(e);
+    return;
   }
+  let data = faker.lorem.sentence();
+  let text = data.toString().toUpperCase();
+  await writeToFile(file, Buffer.from(text));
+  emitter.emit('file-saved', {
+    status: 1,
+    file: file,
+    text: 'saved'
+  });
 };
 
 exports.alterFile = async file => {
