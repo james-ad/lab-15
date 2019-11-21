@@ -4,18 +4,26 @@ module.exports = exports = {};
 
 let fileContents = '{}';
 
-exports.readFile = (file, cb) => {
-  if (file.match(/bad/i)) {
-    cb('Invalid File');
+exports.readFile = async (file, cb) => {
+  if (file) {
+    if (file.match(/bad/i)) {
+      cb('Invalid File');
+    } else {
+      cb(undefined, Buffer.from(fileContents));
+    }
   } else {
-    cb(undefined, Buffer.from(fileContents));
+    return new Error();
   }
 };
-exports.writeFile = (file, buffer, cb) => {
-  if (file.match(/bad/i)) {
-    cb('Invalid File');
+exports.writeFile = async (file, buffer, cb) => {
+  if (file) {
+    if (file.match(/bad/i)) {
+      cb('Invalid File');
+    } else {
+      fileContents = buffer;
+      cb(undefined, true);
+    }
   } else {
-    fileContents = buffer;
-    cb(undefined, true);
+    return new Error();
   }
 };

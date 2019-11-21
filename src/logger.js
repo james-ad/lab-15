@@ -10,5 +10,3 @@ emitter.on('file-error', payload => {
     `ERROR: Changing file ${payload.file} failed with error ${payload.text}`
   );
 });
-
-module.exports = emitter;
