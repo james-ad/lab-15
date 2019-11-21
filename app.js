@@ -1,7 +1,5 @@
 'use strict';
 
-const fs = require('fs');
-const faker = require('faker');
 const fileChanger = require('./src/file-changer');
 
 /*
